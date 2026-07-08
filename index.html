@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>aGanitha - Class 6 CBSE Mathematics</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="lesson-panel" aria-label="Number System practice">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">aGanitha | Class 6 CBSE Mathematics</p>
+          <h1>Number System</h1>
+        </div>
+        <div class="score-box" aria-live="polite">
+          <span id="score">0</span>
+          <small>correct</small>
+        </div>
+      </header>
+
+      <nav class="topic-tabs" aria-label="Topics">
+        <button class="topic-tab active" type="button" data-topic="systems">Number Systems</button>
+        <button class="topic-tab" type="button" data-topic="values">Values</button>
+        <button class="topic-tab" type="button" data-topic="compare">Compare</button>
+        <button class="topic-tab" type="button" data-topic="operations">Operations</button>
+      </nav>
+
+      <section class="question-area">
+        <div class="progress-row">
+          <span id="topicLabel">Hindu-Arabic vs International</span>
+          <span id="questionCounter">Question 1 of 19</span>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <div id="progressFill"></div>
+        </div>
+
+        <article class="question-card">
+          <p id="questionText" class="question-text"></p>
+          <form id="answerForm" class="options-grid"></form>
+        </article>
+
+        <div id="feedback" class="feedback neutral" role="status" aria-live="polite">
+          Select an option to check your answer.
+        </div>
+
+        <div class="actions-row">
+          <button id="backBtn" class="icon-btn" type="button" aria-label="Previous question" title="Previous question">
+            <span aria-hidden="true">&lt;</span>
+          </button>
+          <button id="hintBtn" class="secondary-btn" type="button" hidden>Hint</button>
+          <button id="nextBtn" class="icon-btn" type="button" aria-label="Next question" title="Next question">
+            <span aria-hidden="true">&gt;</span>
+          </button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
