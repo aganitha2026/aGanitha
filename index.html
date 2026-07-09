@@ -20,17 +20,29 @@
         </div>
       </header>
 
-      <nav class="topic-tabs" aria-label="Topics">
+      <section id="startScreen" class="start-screen" aria-label="Student details">
+        <form id="studentForm" class="student-form">
+          <label for="studentName">Student name</label>
+          <div class="student-entry">
+            <input id="studentName" name="studentName" type="text" autocomplete="name" placeholder="Enter your name" required>
+            <button class="primary-btn" type="submit">Start</button>
+          </div>
+        </form>
+      </section>
+
+      <nav id="topicTabs" class="topic-tabs" aria-label="Topics" hidden>
         <button class="topic-tab active" type="button" data-topic="systems">Number Systems</button>
         <button class="topic-tab" type="button" data-topic="values">Values</button>
         <button class="topic-tab" type="button" data-topic="compare">Compare</button>
         <button class="topic-tab" type="button" data-topic="operations">Operations</button>
+        <button class="topic-tab" type="button" data-topic="estimation">Estimation</button>
       </nav>
 
-      <section class="question-area">
+      <section id="questionArea" class="question-area" hidden>
         <div class="progress-row">
           <span id="topicLabel">Hindu-Arabic vs International</span>
-          <span id="questionCounter">Question 1 of 19</span>
+          <span id="timer">Time: 60s</span>
+          <span id="questionCounter">Question 1 of 25</span>
         </div>
         <div class="progress-track" aria-hidden="true">
           <div id="progressFill"></div>
@@ -53,6 +65,13 @@
           <button id="nextBtn" class="icon-btn" type="button" aria-label="Next question" title="Next question">
             <span aria-hidden="true">&gt;</span>
           </button>
+        </div>
+      </section>
+
+      <section id="summaryScreen" class="summary-screen" aria-label="Attempt summary" hidden>
+        <div id="summaryContent"></div>
+        <div class="summary-actions">
+          <button id="restartBtn" class="primary-btn" type="button">New Attempt</button>
         </div>
       </section>
     </section>

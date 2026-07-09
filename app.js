@@ -1,3 +1,6 @@
+const QUESTION_SECONDS = 60;
+const STORAGE_KEY = "aganitha_attempts";
+
 const questions = [
   {
     topic: "systems",
@@ -169,9 +172,71 @@ const questions = [
     answer: 2,
     hint: "Equal packets means division.",
     method: "Divide 6,048 by 72. Since 72 x 80 = 5,760 and 72 x 4 = 288, 72 x 84 = 6,048. Each packet had 84 cookies."
+  },
+  {
+    topic: "estimation",
+    label: "Number Estimation",
+    question: "Estimate 4,876 to the nearest thousand.",
+    options: ["4,000", "4,800", "5,000", "4,900"],
+    answer: 2,
+    hint: "Look at the hundreds digit to decide whether to round the thousands up or keep it same.",
+    method: "In 4,876, the hundreds digit is 8. Since 8 is 5 or more, round 4 thousand up to 5 thousand. The estimate is 5,000."
+  },
+  {
+    topic: "estimation",
+    label: "Number Estimation",
+    question: "Which is the best estimate for 398 + 612 by rounding to the nearest hundred?",
+    options: ["900", "1,000", "1,100", "950"],
+    answer: 1,
+    hint: "Round each number to the nearest hundred before adding.",
+    method: "398 rounds to 400 and 612 rounds to 600. Then 400 + 600 = 1,000."
+  },
+  {
+    topic: "estimation",
+    label: "Number Estimation",
+    question: "Estimate 7,892 - 3,148 by rounding each number to the nearest thousand.",
+    options: ["4,000", "5,000", "3,000", "4,700"],
+    answer: 1,
+    hint: "Round both numbers to the nearest thousand, then subtract.",
+    method: "7,892 rounds to 8,000 and 3,148 rounds to 3,000. Then 8,000 - 3,000 = 5,000."
+  },
+  {
+    topic: "estimation",
+    label: "Number Estimation",
+    question: "A box has 49 pencils. About how many pencils are in 21 such boxes?",
+    options: ["1,000", "900", "1,200", "800"],
+    answer: 0,
+    hint: "Round 49 and 21 to friendly numbers, then multiply.",
+    method: "49 is about 50 and 21 is about 20. Then 50 x 20 = 1,000 pencils."
+  },
+  {
+    topic: "estimation",
+    label: "Number Estimation",
+    question: "A shop sold 2,956 notebooks in one month. Which is the nearest thousand estimate?",
+    options: ["2,000", "2,900", "3,000", "4,000"],
+    answer: 2,
+    hint: "For nearest thousand, check the hundreds digit.",
+    method: "In 2,956, the hundreds digit is 9. Since it is 5 or more, round 2,956 up to 3,000."
+  },
+  {
+    topic: "estimation",
+    label: "Number Estimation",
+    question: "Estimate 81 x 39 using nearby tens.",
+    options: ["3,200", "3,600", "2,800", "3,000"],
+    answer: 0,
+    hint: "Round 81 to 80 and 39 to 40.",
+    method: "81 is about 80 and 39 is about 40. Then 80 x 40 = 3,200."
   }
 ];
 
+const startScreen = document.getElementById("startScreen");
+const studentForm = document.getElementById("studentForm");
+const studentName = document.getElementById("studentName");
+const topicTabsWrap = document.getElementById("topicTabs");
+const questionArea = document.getElementById("questionArea");
+const summaryScreen = document.getElementById("summaryScreen");
+const summaryContent = document.getElementById("summaryContent");
+const restartBtn = document.getElementById("restartBtn");
 const form = document.getElementById("answerForm");
 const questionText = document.getElementById("questionText");
 const feedback = document.getElementById("feedback");
@@ -180,17 +245,85 @@ const backBtn = document.getElementById("backBtn");
 const nextBtn = document.getElementById("nextBtn");
 const questionCounter = document.getElementById("questionCounter");
 const topicLabel = document.getElementById("topicLabel");
+const timer = document.getElementById("timer");
 const progressFill = document.getElementById("progressFill");
 const score = document.getElementById("score");
 const topicTabs = Array.from(document.querySelectorAll(".topic-tab"));
 
+let tick = null;
+
 const state = {
+  student: "",
+  startedAt: "",
   index: 0,
   correct: new Set(),
   attempts: Array(questions.length).fill(0),
   selected: Array(questions.length).fill(null),
-  revealed: Array(questions.length).fill(false)
+  revealed: Array(questions.length).fill(false),
+  hintUsed: Array(questions.length).fill(false),
+  timedOut: Array(questions.length).fill(false),
+  secondsLeft: Array(questions.length).fill(QUESTION_SECONDS)
 };
+
+function resetState(name) {
+  state.student = name;
+  state.startedAt = new Date().toISOString();
+  state.index = 0;
+  state.correct = new Set();
+  state.attempts = Array(questions.length).fill(0);
+  state.selected = Array(questions.length).fill(null);
+  state.revealed = Array(questions.length).fill(false);
+  state.hintUsed = Array(questions.length).fill(false);
+  state.timedOut = Array(questions.length).fill(false);
+  state.secondsLeft = Array(questions.length).fill(QUESTION_SECONDS);
+}
+
+function startQuiz(name) {
+  resetState(name);
+  startScreen.hidden = true;
+  summaryScreen.hidden = true;
+  topicTabsWrap.hidden = false;
+  questionArea.hidden = false;
+  renderQuestion();
+}
+
+function startTimer() {
+  stopTimer();
+  if (state.selected[state.index] !== null || state.timedOut[state.index]) {
+    updateTimerText();
+    return;
+  }
+
+  tick = setInterval(() => {
+    state.secondsLeft[state.index] -= 1;
+    updateTimerText();
+
+    if (state.secondsLeft[state.index] <= 0) {
+      handleTimeout();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (tick) {
+    clearInterval(tick);
+    tick = null;
+  }
+}
+
+function updateTimerText() {
+  timer.textContent = `Time: ${Math.max(0, state.secondsLeft[state.index])}s`;
+}
+
+function handleTimeout() {
+  const item = questions[state.index];
+  stopTimer();
+  state.timedOut[state.index] = true;
+  state.revealed[state.index] = true;
+  setFeedback("method", `Time is up. Correct answer: ${item.options[item.answer]}. Method: ${item.method}`);
+  hintBtn.hidden = true;
+  disableOptions();
+}
 
 function renderQuestion() {
   const item = questions[state.index];
@@ -199,7 +332,9 @@ function renderQuestion() {
   questionCounter.textContent = `Question ${state.index + 1} of ${questions.length}`;
   progressFill.style.width = `${((state.index + 1) / questions.length) * 100}%`;
   backBtn.disabled = state.index === 0;
-  nextBtn.disabled = state.index === questions.length - 1;
+  nextBtn.disabled = false;
+  nextBtn.setAttribute("aria-label", state.index === questions.length - 1 ? "Show summary" : "Next question");
+  nextBtn.title = state.index === questions.length - 1 ? "Show summary" : "Next question";
   score.textContent = state.correct.size;
 
   topicTabs.forEach((tab) => {
@@ -216,6 +351,7 @@ function renderQuestion() {
     input.name = "answer";
     input.value = String(optionIndex);
     input.checked = state.selected[state.index] === optionIndex;
+    input.disabled = state.timedOut[state.index];
 
     const text = document.createElement("span");
     text.textContent = option;
@@ -225,6 +361,14 @@ function renderQuestion() {
   });
 
   showStoredFeedback();
+  updateTimerText();
+  startTimer();
+}
+
+function disableOptions() {
+  form.querySelectorAll("input").forEach((input) => {
+    input.disabled = true;
+  });
 }
 
 function setFeedback(type, message) {
@@ -237,7 +381,12 @@ function showStoredFeedback() {
   const selected = state.selected[state.index];
   const attempts = state.attempts[state.index];
 
-  hintBtn.hidden = attempts === 0 || selected === item.answer || state.revealed[state.index];
+  hintBtn.hidden = attempts === 0 || selected === item.answer || state.revealed[state.index] || state.timedOut[state.index];
+
+  if (state.timedOut[state.index]) {
+    setFeedback("method", `Time is up. Correct answer: ${item.options[item.answer]}. Method: ${item.method}`);
+    return;
+  }
 
   if (selected === null) {
     setFeedback("neutral", "Select an option to check your answer.");
@@ -258,19 +407,25 @@ function showStoredFeedback() {
 }
 
 function chooseAnswer(optionIndex) {
+  if (state.timedOut[state.index]) {
+    return;
+  }
+
   const item = questions[state.index];
   state.selected[state.index] = optionIndex;
+  state.attempts[state.index] += 1;
 
   if (optionIndex === item.answer) {
     state.correct.add(state.index);
+    stopTimer();
     setFeedback("correct", "Correct. Nicely done.");
     hintBtn.hidden = true;
   } else {
     state.correct.delete(state.index);
-    state.attempts[state.index] += 1;
 
     if (state.attempts[state.index] >= 2) {
       state.revealed[state.index] = true;
+      stopTimer();
       setFeedback("method", `Correct answer: ${item.options[item.answer]}. Method: ${item.method}`);
       hintBtn.hidden = true;
     } else {
@@ -282,6 +437,111 @@ function chooseAnswer(optionIndex) {
   score.textContent = state.correct.size;
 }
 
+function saveAttempt(summary) {
+  const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  existing.push(summary);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(existing.slice(-50)));
+}
+
+function buildSummary() {
+  const rows = questions.map((item, index) => {
+    const selected = state.selected[index];
+    const status = state.timedOut[index] ? "Timed out" : selected === item.answer ? "Correct" : selected === null ? "Not answered" : "Wrong";
+    return {
+      no: index + 1,
+      topic: item.label,
+      question: item.question,
+      selected: selected === null ? "-" : item.options[selected],
+      correctAnswer: item.options[item.answer],
+      status,
+      attempts: state.attempts[index],
+      hintUsed: state.hintUsed[index] ? "Yes" : "No",
+      timeUsed: `${QUESTION_SECONDS - state.secondsLeft[index]}s`
+    };
+  });
+
+  return {
+    student: state.student,
+    date: new Date().toLocaleString(),
+    score: state.correct.size,
+    total: questions.length,
+    hintsUsed: state.hintUsed.filter(Boolean).length,
+    timedOut: state.timedOut.filter(Boolean).length,
+    rows
+  };
+}
+
+function showSummary() {
+  stopTimer();
+  const summary = buildSummary();
+  saveAttempt(summary);
+
+  questionArea.hidden = true;
+  topicTabsWrap.hidden = true;
+  summaryScreen.hidden = false;
+
+  summaryContent.innerHTML = `
+    <h2>Attempt Summary</h2>
+    <p><strong>Student:</strong> ${escapeHtml(summary.student)} | <strong>Date:</strong> ${escapeHtml(summary.date)}</p>
+    <div class="summary-grid">
+      <div class="summary-stat"><strong>${summary.score}/${summary.total}</strong><span>Score</span></div>
+      <div class="summary-stat"><strong>${summary.hintsUsed}</strong><span>Hints used</span></div>
+      <div class="summary-stat"><strong>${summary.timedOut}</strong><span>Timed out</span></div>
+      <div class="summary-stat"><strong>${getSavedAttempts().length}</strong><span>Saved attempts</span></div>
+    </div>
+    <div class="summary-table-wrap">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Topic</th>
+            <th>Status</th>
+            <th>Attempts</th>
+            <th>Hint</th>
+            <th>Time</th>
+            <th>Answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${summary.rows.map((row) => `
+            <tr>
+              <td>${row.no}</td>
+              <td>${escapeHtml(row.topic)}</td>
+              <td>${escapeHtml(row.status)}</td>
+              <td>${row.attempts}</td>
+              <td>${row.hintUsed}</td>
+              <td>${row.timeUsed}</td>
+              <td>${escapeHtml(row.correctAnswer)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function getSavedAttempts() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[char]);
+}
+
+studentForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const name = studentName.value.trim();
+  if (name) {
+    startQuiz(name);
+  }
+});
+
 form.addEventListener("change", (event) => {
   if (event.target.matches("input[name='answer']")) {
     chooseAnswer(Number(event.target.value));
@@ -290,6 +550,7 @@ form.addEventListener("change", (event) => {
 
 hintBtn.addEventListener("click", () => {
   const item = questions[state.index];
+  state.hintUsed[state.index] = true;
   setFeedback("hint", `Hint: ${item.hint}`);
 });
 
@@ -304,7 +565,15 @@ nextBtn.addEventListener("click", () => {
   if (state.index < questions.length - 1) {
     state.index += 1;
     renderQuestion();
+  } else {
+    showSummary();
   }
+});
+
+restartBtn.addEventListener("click", () => {
+  summaryScreen.hidden = true;
+  startScreen.hidden = false;
+  studentName.focus();
 });
 
 topicTabs.forEach((tab) => {
@@ -316,5 +585,3 @@ topicTabs.forEach((tab) => {
     }
   });
 });
-
-renderQuestion();
