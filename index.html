@@ -1,82 +1,76 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>aGanitha - Class 6 CBSE Mathematics</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pattern Playground | Class 6 Maths</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .student-setup{margin:26px 0;padding:19px;border:2px dashed #d9d0f2;border-radius:16px;background:#fbfaff}.student-setup label{display:block;font-weight:800;margin-bottom:8px}.student-setup div{display:flex;gap:10px;flex-wrap:wrap}.student-setup input{min-width:250px;flex:1;border:2px solid #ded8ef;border-radius:10px;padding:10px 12px;font:800 1rem Nunito;color:#26325a}.test-tools{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 0}.timer,.attempts,.question-count{border-radius:11px;padding:9px 12px;font-weight:800}.timer{background:#fff0cc;color:#a66700}.timer.warning{background:#ffe3e8;color:#bd3e58}.attempts{background:#efeaff;color:#5e42be}.question-count{background:#e9f8f2;color:#28735b}.next-btn{margin-top:14px}.summary{margin-top:24px;padding:24px;border-radius:18px;background:#f1edff;border:2px solid #d8cef6}.summary h3{font:800 1.7rem 'Baloo 2';margin:0}.summary p{font-weight:800;color:#5e6682}.summary table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden}.summary th,.summary td{padding:9px 11px;text-align:left;border-bottom:1px solid #eee9f8;font-weight:700}.summary th{color:#7454db}.student-history{margin-top:20px}.student-history h3{font:800 1.25rem 'Baloo 2';margin:0 0 8px}.history-row{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:#faf9ff;border:1px solid #ebe6f7;border-radius:10px;margin:6px 0;font-weight:800}.history-row span:last-child{color:#7454db}@media(max-width:650px){.student-setup input{min-width:100%}.summary{padding:16px}.summary th,.summary td{padding:8px 6px;font-size:.82rem}}
+  </style>
 </head>
 <body>
   <main class="app-shell">
-    <section class="lesson-panel" aria-label="Number System practice">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">aGanitha | Class 6 CBSE Mathematics</p>
-          <h1>Number System</h1>
-        </div>
-        <div class="score-box" aria-live="polite">
-          <span id="score">0</span>
-          <small>correct</small>
-        </div>
-      </header>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">CLASS 6 • CBSE MATHS</p>
+        <h1>Pattern <span>Playground</span></h1>
+        <p class="hero-text">See the numbers, spot the rule, and become a pattern detective!</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="spark s1">✦</div><div class="spark s2">✦</div>
+        <div class="number-orbit n1">1</div><div class="number-orbit n2">2</div><div class="number-orbit n3">3</div>
+        <div class="rocket">🚀</div>
+      </div>
+    </section>
 
-      <section id="startScreen" class="start-screen" aria-label="Student details">
-        <form id="studentForm" class="student-form">
-          <label for="studentName">Student name</label>
-          <div class="student-entry">
-            <input id="studentName" name="studentName" type="text" autocomplete="name" placeholder="Enter your name" required>
-            <button class="primary-btn" type="submit">Start</button>
-          </div>
-        </form>
-      </section>
+    <section class="progress-card">
+      <div class="progress-label"><span>My discovery trail</span><strong id="scoreText">0 / 32 solved</strong></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </section>
 
-      <nav id="topicTabs" class="topic-tabs" aria-label="Topics" hidden>
-        <button class="topic-tab active" type="button" data-topic="systems">Number Systems</button>
-        <button class="topic-tab" type="button" data-topic="values">Values</button>
-        <button class="topic-tab" type="button" data-topic="compare">Compare</button>
-        <button class="topic-tab" type="button" data-topic="operations">Operations</button>
-        <button class="topic-tab" type="button" data-topic="estimation">Estimation</button>
-      </nav>
+    <nav class="tabs" aria-label="Practice areas">
+      <button class="tab active" data-view="explore">🔎 Explore patterns</button>
+      <button class="tab" data-view="practice">✏️ Practice challenge</button>
+    </nav>
 
-      <section id="questionArea" class="question-area" hidden>
-        <div class="progress-row">
-          <span id="topicLabel">Hindu-Arabic vs International</span>
-          <span id="timer">Time: 60s</span>
-          <span id="questionCounter">Question 1 of 25</span>
+    <section class="panel" id="exploreView">
+      <div class="section-title-row">
+        <div><p class="mini-label">PICK A PATTERN</p><h2>Watch the pattern grow</h2></div>
+        <div class="pattern-picker-wrap"><label for="patternPicker">Pattern</label><select id="patternPicker"></select></div>
+      </div>
+      <article class="explorer-card">
+        <div class="explorer-info">
+          <div class="pattern-icon" id="patternIcon">●</div>
+          <div><h3 id="patternName">Natural numbers</h3><p id="patternRule">Counting numbers: add 1 each time.</p></div>
+          <div class="formula" id="formula">n</div>
         </div>
-        <div class="progress-track" aria-hidden="true">
-          <div id="progressFill"></div>
-        </div>
+        <div class="sequence-display" id="sequenceDisplay"></div>
+        <div class="visual-area"><p class="visual-caption">This is what the first few terms look like:</p><div class="dot-stage" id="dotStage"></div></div>
+      </article>
+      <div class="tip-box"><span>💡</span><p id="patternTip">Natural numbers help us count everyday things.</p></div>
+    </section>
 
-        <article class="question-card">
-          <p id="questionText" class="question-text"></p>
-          <form id="answerForm" class="options-grid"></form>
-        </article>
-
-        <div id="feedback" class="feedback neutral" role="status" aria-live="polite">
-          Select an option to check your answer.
-        </div>
-
-        <div class="actions-row">
-          <button id="backBtn" class="icon-btn" type="button" aria-label="Previous question" title="Previous question">
-            <span aria-hidden="true">&lt;</span>
-          </button>
-          <button id="hintBtn" class="secondary-btn" type="button" hidden>Hint</button>
-          <button id="nextBtn" class="icon-btn" type="button" aria-label="Next question" title="Next question">
-            <span aria-hidden="true">&gt;</span>
-          </button>
-        </div>
-      </section>
-
-      <section id="summaryScreen" class="summary-screen" aria-label="Attempt summary" hidden>
-        <div id="summaryContent"></div>
-        <div class="summary-actions">
-          <button id="restartBtn" class="primary-btn" type="button">New Attempt</button>
-        </div>
-      </section>
+    <section class="panel hidden" id="practiceView">
+      <div class="section-title-row practice-heading">
+        <div><p class="mini-label">TIMED PATTERN CHALLENGE</p><h2>Ready, set, pattern!</h2><p>Answer 32 questions. Each question has 60 seconds and two attempts; a hint appears after the first wrong answer.</p></div>
+        <div class="badge">⭐ Pattern detective</div>
+      </div>
+      <div class="student-setup" id="studentSetup">
+        <label for="studentName">Student name</label>
+        <div><input id="studentName" maxlength="40" placeholder="Enter your name" autocomplete="name" /><button id="startTestBtn" class="check-btn">Start timed test →</button></div>
+      </div>
+      <div class="test-tools hidden" id="testTools"><div class="timer" id="timerBadge">⏱ 60 seconds</div><div class="attempts" id="attemptBadge">Attempt 1 of 2</div><div class="question-count" id="questionCount">Question 1 of 32</div></div>
+      <div id="questionList" class="question-list"></div>
+      <section class="summary hidden" id="summaryView"></section>
+      <section class="student-history" id="studentHistory"></section>
+      <div class="challenge-footer"><button id="resetBtn" class="secondary-btn">↻ New student / restart</button><p id="challengeMessage">Enter a student name to begin the timed challenge.</p></div>
     </section>
   </main>
-
+  <div class="toast" id="toast" role="status"></div>
   <script src="app.js"></script>
 </body>
 </html>
